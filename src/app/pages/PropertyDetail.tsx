@@ -3,12 +3,13 @@ import { motion } from "motion/react";
 import { MapPin, Bed, Bath, Maximize, Calendar, Check, ArrowLeft } from "lucide-react";
 import { Link } from "react-router";
 import { useState } from "react";
-import { allProperties } from "../data/properties";
+import { useProperties } from "../context/PropertyContext";
 import { toast } from "sonner";
 
 export function PropertyDetail() {
   const { id } = useParams();
-  const property = allProperties.find(p => p.id === id) || allProperties[0];
+  const { getProperty } = useProperties();
+  const property = getProperty(id || "") || useProperties().properties[0];
   const [selectedImage, setSelectedImage] = useState(0);
   const [loading, setLoading] = useState(false);
 

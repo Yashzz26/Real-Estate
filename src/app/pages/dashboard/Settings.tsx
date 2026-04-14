@@ -5,9 +5,15 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export function Settings() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
+
+  const handleProfileUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateUser({ name, email });
+    toast.success("Profile information updated successfully!");
+  };
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -47,10 +53,7 @@ export function Settings() {
           </div>
 
           <form 
-            onSubmit={(e) => {
-              e.preventDefault();
-              toast.success("Profile information updated successfully!");
-            }} 
+            onSubmit={handleProfileUpdate} 
             className="space-y-4"
           >
             <div>

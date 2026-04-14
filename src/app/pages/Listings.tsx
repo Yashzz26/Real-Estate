@@ -3,12 +3,18 @@ import { PropertyCard } from "../components/PropertyCard";
 import { SlidersHorizontal } from "lucide-react";
 import { motion } from "motion/react";
 import { useSearchParams } from "react-router";
-import { allProperties } from "../data/properties";
+import { useProperties } from "../context/PropertyContext";
 
 export function Listings() {
+  const { properties } = useProperties();
   const [searchParams, setSearchParams] = useSearchParams();
   
-  const [selectedType, setSelectedType] = useState(searchParams.get("type") || "All");
+  const initialType = searchParams.get("type");
+  const normalizedType = initialType 
+    ? initialType.charAt(0).toUpperCase() + initialType.slice(1).toLowerCase() 
+    : "All";
+
+  const [selectedType, setSelectedType] = useState(normalizedType);
   const [priceRange, setPriceRange] = useState(searchParams.get("price") || "All");
   const [beds, setBeds] = useState(searchParams.get("beds") || "All");
   const [baths, setBaths] = useState(searchParams.get("baths") || "All");
@@ -25,6 +31,29 @@ export function Listings() {
     setSearchParams(params, { replace: true });
   }, [selectedType, priceRange, beds, baths, locationQuery]);
 
+  const filteredProperties = properties.filter((property) => {
+    // Type filter
+    if (selectedType !== "All" && property.type.toLowerCase() !== selectedType.toLowerCase()) return false;
+    
+    // Price filter
+    const priceNum = parseInt(property.price.replace(/[^0-9]/g, ""));
+    if (priceRange === "Under $500k" && priceNum >= 500000) return false;
+    if (priceRange === "$500k - $1M" && (priceNum < 500000 || priceNum > 1000000)) return false;
+    if (priceRange === "$1M - $2M" && (priceNum < 1000000 || priceNum > 2000000)) return false;
+    if (priceRange === "Above $2M" && priceNum <= 2000000) return false;
+
+    // Beds filter
+    if (beds !== "All") {
+      const minBeds = parseInt(beds);
+      if (property.beds < minBeds) return false;
+    }
+
+    // Baths filter
+    if (baths !== "All") {
+      const minBaths = parseInt(baths);
+      if (property.baths < minBaths) return false;
+    }
+
     // Location filter
     if (locationQuery && !property.location.toLowerCase().includes(locationQuery.toLowerCase())) return false;
 
@@ -35,7 +64,7 @@ export function Listings() {
     
     if (sortBy === "Price: Low to High") return priceA - priceB;
     if (sortBy === "Price: High to Low") return priceB - priceA;
-    if (sortBy === "Most Recent") return b.year - a.year; // Mocking "recent" with build year
+    if (sortBy === "Most Recent") return b.year - a.year;
     return 0;
   });
 

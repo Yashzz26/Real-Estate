@@ -143,17 +143,24 @@ export function DashboardLayout() {
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
               </button>
 
-              <div className="flex items-center gap-3 pl-4 border-l border-gray-200 dark:border-gray-700">
-                <img
-                  src={user?.avatar}
-                  alt={user?.name}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-                <div className="hidden sm:block">
-                  <p className="text-sm dark:text-white">{user?.name}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{user?.role}</p>
+                <div className="flex items-center gap-3 pl-4 border-l border-gray-200 dark:border-gray-700">
+                  <img
+                    src={user?.avatar}
+                    alt={user?.name}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <div className="hidden sm:block">
+                    <p className="text-sm dark:text-white font-medium">{user?.name}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{user?.role}</p>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="ml-2 p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
+                    title="Logout"
+                  >
+                    <LogOut className="w-5 h-5" />
+                  </button>
                 </div>
-              </div>
             </div>
           </div>
         </header>

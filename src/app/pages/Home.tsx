@@ -7,9 +7,7 @@ import { TestimonialCard } from "../components/TestimonialCard";
 import { TypingEffect } from "../components/TypingEffect";
 import { Shield, CheckCircle, Clock, Headphones, ArrowRight } from "lucide-react";
 import { Link } from "react-router";
-import { allProperties } from "../data/properties";
-
-const featuredProperties = allProperties.slice(0, 4);
+import { useProperties } from "../context/PropertyContext";
 
 const categories = [
   {
@@ -80,6 +78,9 @@ const testimonials = [
 ];
 
 export function Home() {
+  const { properties } = useProperties();
+  const featuredProperties = properties.slice(0, 4);
+
   return (
     <div className="pt-20">
       <section className="relative h-screen flex items-center overflow-hidden">
@@ -156,27 +157,6 @@ export function Home() {
             <SearchBar />
           </div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="text-white/60"
-          >
-            <div className="w-6 h-10 border-2 border-white/60 rounded-full flex items-start justify-center p-2">
-              <motion.div
-                animate={{ y: [0, 12, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="w-1.5 h-1.5 bg-white/60 rounded-full"
-              />
-            </div>
-          </motion.div>
-        </motion.div>
       </section>
 
       <section className="py-24 bg-gray-50">

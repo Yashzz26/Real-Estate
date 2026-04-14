@@ -12,6 +12,8 @@ export interface Property {
   year: number;
   description: string;
   features: string[];
+  status?: "active" | "pending" | "sold";
+  views?: number;
 }
 
 export const allProperties: Property[] = [

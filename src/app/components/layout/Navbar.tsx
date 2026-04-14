@@ -1,15 +1,22 @@
-import { Link, useLocation } from "react-router";
-import { Home, Building2, Info, Phone, Moon, Sun, User } from "lucide-react";
-import { motion } from "motion/react";
+import { Link, useLocation, useNavigate } from "react-router";
+import { Home, Building2, Info, Phone, Moon, Sun, User, LogOut, Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 
 export function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isDark, toggleTheme } = useTheme();
-  const { user, isAuthenticated } = useAuth();
+  const { logout, isAuthenticated } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -82,13 +89,22 @@ export function Navbar() {
             </button>
 
             {isAuthenticated ? (
-              <Link
-                to="/dashboard"
-                className="flex items-center gap-2 px-4 py-2.5 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
-              >
-                <User className="w-4 h-4" />
-                <span className="hidden sm:inline">Dashboard</span>
-              </Link>
+              <div className="flex items-center gap-3">
+                <Link
+                  to="/dashboard"
+                  className="flex items-center gap-2 px-4 py-2.5 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+                >
+                  <User className="w-4 h-4" />
+                  <span className="hidden sm:inline">Dashboard</span>
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="p-2.5 text-gray-700 dark:text-gray-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
+                  title="Logout"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </div>
             ) : (
               <>
                 <Link
@@ -105,9 +121,91 @@ export function Navbar() {
                 </Link>
               </>
             )}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+            >
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 overflow-hidden"
+          >
+            <div className="px-4 py-6 space-y-4">
+              {navLinks.map((link) => {
+                const Icon = link.icon;
+                const isActive = location.pathname === link.path;
+                return (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                      isActive
+                        ? "bg-amber-50 dark:bg-amber-900/20 text-amber-600"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="font-medium">{link.label}</span>
+                  </Link>
+                );
+              })}
+              
+              <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
+                {isAuthenticated ? (
+                  <div className="space-y-2">
+                    <Link
+                      to="/dashboard"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-all"
+                    >
+                      <User className="w-5 h-5" />
+                      <span className="font-medium">Dashboard</span>
+                    </Link>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all"
+                    >
+                      <LogOut className="w-5 h-5" />
+                      <span className="font-medium">Logout</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-4">
+                    <Link
+                      to="/login"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center justify-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-all font-medium"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      to="/signup"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center justify-center px-4 py-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-all font-medium"
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 }
