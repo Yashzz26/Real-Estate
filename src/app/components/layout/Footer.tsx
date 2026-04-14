@@ -11,7 +11,7 @@ export function Footer() {
               <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg flex items-center justify-center">
                 <Building2 className="w-6 h-6 text-white" />
               </div>
-              <span className="text-2xl text-white tracking-tight">LuxeEstate</span>
+              <span className="text-2xl text-white tracking-tight">Luxe-estate</span>
             </div>
             <p className="text-sm leading-relaxed">
               Your trusted partner in finding the perfect home. We connect you with premium properties and verified agents.
@@ -51,14 +51,14 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-5 h-5 text-amber-500 flex-shrink-0" />
-                <span className="text-sm">contact@luxeestate.com</span>
+                <span className="text-sm">contact@luxe-estate.com</span>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm">© 2026 LuxeEstate. All rights reserved.</p>
+          <p className="text-sm">© 2026 Luxe-estate. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <a href="#" className="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-amber-600 transition-colors">
               <Facebook className="w-4 h-4" />

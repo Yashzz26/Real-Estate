@@ -48,7 +48,7 @@ export function Navbar() {
             <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg flex items-center justify-center">
               <Building2 className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl tracking-tight dark:text-white">LuxeEstate</span>
+            <span className="text-2xl tracking-tight dark:text-white">Luxe-estate</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
