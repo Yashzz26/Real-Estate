@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { Camera, Save } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export function Settings() {
   const { user } = useAuth();
@@ -45,7 +46,13 @@ export function Settings() {
             </div>
           </div>
 
-          <form className="space-y-4">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              toast.success("Profile information updated successfully!");
+            }} 
+            className="space-y-4"
+          >
             <div>
               <label className="block mb-2 dark:text-white">Full Name</label>
               <input
@@ -95,7 +102,13 @@ export function Settings() {
         >
           <h2 className="text-xl mb-6 dark:text-white">Change Password</h2>
 
-          <form className="space-y-4">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              toast.success("Password updated successfully!");
+            }} 
+            className="space-y-4"
+          >
             <div>
               <label className="block mb-2 dark:text-white">Current Password</label>
               <input

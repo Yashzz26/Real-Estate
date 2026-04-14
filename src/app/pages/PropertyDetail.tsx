@@ -4,11 +4,22 @@ import { MapPin, Bed, Bath, Maximize, Calendar, Check, ArrowLeft } from "lucide-
 import { Link } from "react-router";
 import { useState } from "react";
 import { allProperties } from "../data/properties";
+import { toast } from "sonner";
 
 export function PropertyDetail() {
   const { id } = useParams();
   const property = allProperties.find(p => p.id === id) || allProperties[0];
   const [selectedImage, setSelectedImage] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const handleInquiry = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      toast.success("Inquiry sent successfully! An agent will contact you soon.");
+    }, 1500);
+  };
 
   return (
     <div className="pt-20">
@@ -109,12 +120,13 @@ export function PropertyDetail() {
                   <p className="text-4xl text-amber-600 font-bold">{property.price}</p>
                 </div>
 
-                <form className="space-y-4 mb-6">
+                <form onSubmit={handleInquiry} className="space-y-4 mb-6">
                   <div>
                     <label className="block text-sm mb-2 dark:text-white">Full Name</label>
                     <input
                       type="text"
                       placeholder="John Doe"
+                      required
                       className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
                     />
                   </div>
@@ -123,6 +135,7 @@ export function PropertyDetail() {
                     <input
                       type="email"
                       placeholder="john@example.com"
+                      required
                       className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
                     />
                   </div>
@@ -131,21 +144,27 @@ export function PropertyDetail() {
                     <textarea
                       rows={4}
                       placeholder="I'm interested in this property..."
+                      required
                       className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
                     />
                   </div>
+                  <button 
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-amber-600 text-white py-3 rounded-xl hover:bg-amber-700 transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {loading ? (
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      "Contact Agent"
+                    )}
+                  </button>
                 </form>
 
                 <button 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    alert("Inquiry Sent Successfully!");
-                  }}
-                  className="w-full bg-amber-600 text-white py-3 rounded-xl hover:bg-amber-700 transition-colors mb-3 font-medium"
+                  onClick={() => toast.success("Tour request sent! We will contact you to confirm the time.")}
+                  className="w-full border-2 border-amber-600 text-amber-600 py-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/10 transition-colors font-medium"
                 >
-                  Contact Agent
-                </button>
-                <button className="w-full border-2 border-amber-600 text-amber-600 py-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/10 transition-colors font-medium">
                   Schedule Tour
                 </button>
               </div>

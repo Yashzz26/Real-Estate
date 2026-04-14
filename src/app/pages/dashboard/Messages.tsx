@@ -41,6 +41,36 @@ const messages = [
 export function Messages() {
   const [selectedConversation, setSelectedConversation] = useState(conversations[0]);
   const [newMessage, setNewMessage] = useState("");
+  const [chatHistory, setChatHistory] = useState<Record<string, typeof messages>>({
+    "1": messages,
+    "2": [
+      { id: "1", sender: "other", text: "I'd like to schedule a viewing for the Oceanfront Villa.", time: "10:00 AM" },
+      { id: "2", sender: "me", text: "Sure! Does tomorrow at 2 PM work for you?", time: "10:05 AM" }
+    ],
+    "3": [
+      { id: "1", sender: "other", text: "Thank you for the information on the Urban Penthouse!", time: "Yesterday" }
+    ]
+  });
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+
+    const msg = {
+      id: Date.now().toString(),
+      sender: "me",
+      text: newMessage,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    setChatHistory(prev => ({
+      ...prev,
+      [selectedConversation.id]: [...(prev[selectedConversation.id] || []), msg]
+    }));
+    setNewMessage("");
+  };
+
+  const currentMessages = chatHistory[selectedConversation.id] || [];
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -104,7 +134,7 @@ export function Messages() {
           </div>
 
           <div className="flex-1 p-4 overflow-y-auto space-y-4">
-            {messages.map((message) => (
+            {currentMessages.map((message) => (
               <div
                 key={message.id}
                 className={`flex ${message.sender === "me" ? "justify-end" : "justify-start"}`}
@@ -126,7 +156,7 @@ export function Messages() {
           </div>
 
           <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex gap-3">
+            <form onSubmit={handleSendMessage} className="flex gap-3">
               <input
                 type="text"
                 value={newMessage}
@@ -134,10 +164,13 @@ export function Messages() {
                 placeholder="Type a message..."
                 className="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 dark:text-white"
               />
-              <button className="px-6 py-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors flex items-center gap-2">
+              <button 
+                type="submit"
+                className="px-6 py-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors flex items-center gap-2"
+              >
                 <Send className="w-5 h-5" />
               </button>
-            </div>
+            </form>
           </div>
         </div>
       </div>

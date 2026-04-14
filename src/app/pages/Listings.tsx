@@ -12,6 +12,8 @@ export function Listings() {
   const [priceRange, setPriceRange] = useState(searchParams.get("price") || "All");
   const [beds, setBeds] = useState(searchParams.get("beds") || "All");
   const [baths, setBaths] = useState(searchParams.get("baths") || "All");
+  const [sortBy, setSortBy] = useState("Most Recent");
+  const locationQuery = searchParams.get("location") || "";
 
   useEffect(() => {
     const params: any = {};
@@ -19,33 +21,22 @@ export function Listings() {
     if (priceRange !== "All") params.price = priceRange;
     if (beds !== "All") params.beds = beds;
     if (baths !== "All") params.baths = baths;
+    if (locationQuery) params.location = locationQuery;
     setSearchParams(params, { replace: true });
-  }, [selectedType, priceRange, beds, baths]);
+  }, [selectedType, priceRange, beds, baths, locationQuery]);
 
-  const filteredProperties = allProperties.filter((property) => {
-    // Type filter
-    if (selectedType !== "All" && property.type.toLowerCase() !== selectedType.toLowerCase()) return false;
-    
-    // Price filter
-    const priceNum = parseInt(property.price.replace(/[^0-9]/g, ""));
-    if (priceRange === "Under $500k" && priceNum >= 500000) return false;
-    if (priceRange === "$500k - $1M" && (priceNum < 500000 || priceNum > 1000000)) return false;
-    if (priceRange === "$1M - $2M" && (priceNum < 1000000 || priceNum > 2000000)) return false;
-    if (priceRange === "Above $2M" && priceNum <= 2000000) return false;
-
-    // Beds filter
-    if (beds !== "All") {
-      const minBeds = parseInt(beds);
-      if (property.beds < minBeds) return false;
-    }
-
-    // Baths filter
-    if (baths !== "All") {
-      const minBaths = parseInt(baths);
-      if (property.baths < minBaths) return false;
-    }
+    // Location filter
+    if (locationQuery && !property.location.toLowerCase().includes(locationQuery.toLowerCase())) return false;
 
     return true;
+  }).sort((a, b) => {
+    const priceA = parseInt(a.price.replace(/[^0-9]/g, ""));
+    const priceB = parseInt(b.price.replace(/[^0-9]/g, ""));
+    
+    if (sortBy === "Price: Low to High") return priceA - priceB;
+    if (sortBy === "Price: High to Low") return priceB - priceA;
+    if (sortBy === "Most Recent") return b.year - a.year; // Mocking "recent" with build year
+    return 0;
   });
 
   return (
@@ -170,6 +161,7 @@ export function Listings() {
                       setPriceRange("All");
                       setBeds("All");
                       setBaths("All");
+                      setSearchParams({});
                     }}
                     className="w-full py-2 text-amber-600 text-sm font-medium hover:text-amber-700 transition-colors"
                   >
@@ -188,7 +180,11 @@ export function Listings() {
                 <p className="text-gray-600 dark:text-gray-400">
                   Showing <span className="font-medium text-gray-900 dark:text-white">{filteredProperties.length}</span> properties
                 </p>
-                <select className="px-4 py-2 border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <select 
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-4 py-2 border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                >
                   <option>Most Recent</option>
                   <option>Price: Low to High</option>
                   <option>Price: High to Low</option>
